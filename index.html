@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Free Chess Puzzles</title>
+  <style>
+    body {
+      font-family: Segoe UI, sans-serif;
+      background-color: #f0f0f0;
+      text-align: center;
+      padding-top: 100px;
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      font-size: 16px;
+    }
+
+    #splashDistraction {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      color: white;
+      z-index: 9998;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+    }
+    #splashDistraction p {
+      animation: flicker 0.4s infinite;
+    }
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    #loadingBar {
+      width: 80%;
+      height: 20px;
+      background: #333;
+      margin-top: 20px;
+    }
+    #barFill {
+      width: 0%;
+      height: 100%;
+      background: red;
+    }
+
+    #slideshow {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      z-index: 9999;
+      overflow: hidden;
+    }
+    #slideshow img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #xpAudio, #distortedSound {
+      display: none;
+    }
+
+    #finalRoast p {
+      animation: glitch 0.3s infinite;
+    }
+    @keyframes glitch {
+      0% { transform: translate(0); }
+      20% { transform: translate(-2px, 2px); }
+      40% { transform: translate(2px, -2px); }
+      60% { transform: translate(-1px, 1px); }
+      80% { transform: translate(1px, -1px); }
+      100% { transform: translate(0); }
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to Free Chess Puzzles</h1>
+  <input type="email" id="emailInput" placeholder="Email"><br>
+  <input type="password" id="passwordInput" placeholder="Password"><br>
+  <button onclick="validateLogin()">Sign In</button>
+  <button onclick="startSplash()">Sign Up</button>
+
+  <div id="splashDistraction">
+    <p>Initializing sign up to FCP…</p>
+    <p>System will continue for you.</p>
+    <div id="loadingBar"><div id="barFill"></div></div>
+  </div>
+
+  <div id="slideshow">
+    <img id="bsodImage" src="BSOH.png" alt="BSOH">
+  </div>
+
+  <audio id="xpAudio" src="wxe.mp3"></audio>
+  <audio id="distortedSound" src="wd.mp3"></audio>
+
+  <script>
+    const images = [
+      "BSOH.png",
+      "BSOH 2.png",
+      "BSOH 3.png",
+      "BSOH 4.png",
+      "BSOH 5.png"
+    ];
+    let index = 0;
+    let direction = 1;
+
+    function validateLogin() {
+      const email = document.getElementById("emailInput").value;
+      const password = document.getElementById("passwordInput").value;
+      if ((email.endsWith("@gmail.com") || email.endsWith("@outlook.com")) && password.length > 8) {
+        window.location.href = "https://chessigma.com";
+      } else {
+        alert("Invalid credentials. This is a meme.");
+      }
+    }
+
+    function startSplash() {
+      const splash = document.getElementById("splashDistraction");
+      splash.style.display = "flex";
+
+      if (splash.requestFullscreen) {
+        splash.requestFullscreen();
+      } else if (splash.webkitRequestFullscreen) {
+        splash.webkitRequestFullscreen();
+      } else if (splash.msRequestFullscreen) {
+        splash.msRequestFullscreen();
+      }
+
+      document.getElementById("distortedSound").play();
+
+      let fill = document.getElementById("barFill");
+      let progress = 0;
+      let loading = setInterval(() => {
+        progress += 5;
+        fill.style.width = progress + "%";
+        if (progress >= 100) clearInterval(loading);
+      }, 90);
+
+      setTimeout(() => {
+        splash.style.display = "none";
+        startSlideshow();
+      }, 3500);
+    }
+
+    function startSlideshow() {
+      const slideshow = document.getElementById("slideshow");
+      slideshow.style.display = "block";
+
+      document.getElementById("bsodImage").src = images[0];
+      setTimeout(() => {
+        const interval = setInterval(() => {
+          index += direction;
+          document.getElementById("bsodImage").src = images[index];
+
+          if (index === images.length - 1) {
+            direction = -1;
+          }
+
+          if (index === 0 && direction === -1) {
+            clearInterval(interval);
+            playXPBeat();
+          }
+        }, 500);
+      }, 8000);
+    }
+
+    function playXPBeat() {
+      const audio = document.getElementById("xpAudio");
+      audio.style.display = "block";
+      audio.play();
+
+      setTimeout(() => spawnError(1), 5000);
+      setTimeout(() => spawnError(2), 6000);
+      setTimeout(() => spawnError(3), 6850);
+      setTimeout(() => startErrorStorm(4), 7278);
+
+      setTimeout(() => {
+        const roasts = [
+          "LMAO GET DUMONT'ED, DUMBO",
+          "YOU COULD HAVE PRESSED ESC AT ANY TIME, LOL",
+          "LUCKILY THIS IS NOT MALWARE — JUST A PRANK XD",
+          "YOUR SYSTEM HAS BEEN MEME'D BEYOND REPAIR",
+          "ERROR 101: USER TRUST VIOLATION DETECTED",
+          "BONK STORM WAS THE FINAL WARNING"
+        ];
+        const roastHTML = roasts.map(r => `<p>${r}</p>`).join("");
+        document.body.innerHTML = `
+          <div id="finalRoast" style="background:black;color:white;height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;font-size:2em;text-align:center;">
+            ${roastHTML}
+            <button onclick="location.reload()" style="margin-top:20px;padding:10px;font-size:1em;">Restart Protocol</button>
+          </div>`;
+      }, 28000);
+    }
+
+    function spawnError(id) {
+      const img = document.createElement("img");
+      img.src = "error.png";
+      img.alt = "Succses Error #" + id;
+      img.style.position = "absolute";
+      img.style.top = Math.random() * window.innerHeight + "px";
+      img.style.left = Math.random() * window.innerWidth + "px";
+      img.style.transform = "translate(-50%, -50%)";
+      img.style.zIndex = 10001;
+      img.style.maxWidth = "300px";
+      img.style.height = "auto";
+      img.style.width = "auto";
+      document.getElementById("slideshow").appendChild(img);
+    }
+
+    function startErrorStorm(startId) {
+      let count = startId;
+      const maxErrors = 100;
+      const storm = setInterval(() => {
+        if (count >= maxErrors) {
+          clearInterval(storm);
+          return;
+        }
+        spawnError(count);
+        count++;
+      }, 428);
+    }
+  </script>
+</body>
+</html>
